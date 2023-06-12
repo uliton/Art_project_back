@@ -1,7 +1,11 @@
 from rest_framework import serializers
+from .models import Artwork, Style, Medium, Artist
 
-from user.serializers import ArtistSerializer
-from .models import Artwork, Style, Medium
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = ["fullname", 'location', "bio", "phone"]
 
 
 class ArtworkSerializer(serializers.ModelSerializer):
@@ -26,3 +30,5 @@ class MediumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medium
         fields = ['id', 'name']
+
+

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Artwork, Style, Medium
-from .serializers import ArtworkSerializer, StyleSerializer, MediumSerializer
+from .models import Artwork, Style, Medium, Artist
+from .serializers import ArtworkSerializer, StyleSerializer, MediumSerializer, ArtistSerializer
 
 
 class ArtworkViewSet(viewsets.ModelViewSet):
@@ -16,3 +16,8 @@ class StyleViewSet(viewsets.ModelViewSet):
 class MediumViewSet(viewsets.ModelViewSet):
     queryset = Medium.objects.all()
     serializer_class = MediumSerializer
+
+
+class ArtistViewSet(viewsets.ModelViewSet):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer

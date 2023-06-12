@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext as _
 
-from .models import User, Artist
+from .models import User
 
 
 @admin.register(User)
@@ -39,8 +39,4 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ("email",)
 
 
-@admin.register(Artist)
-class ArtistAdmin(admin.ModelAdmin):
-    list_display = ("fullname", "location", "phone")
-    search_fields = ("fullname", "location", "phone")
 

@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-from user.models import Artist
-
 
 class Style(models.Model):
     name = models.CharField(max_length=255)
@@ -16,6 +14,14 @@ class Medium(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Artist(models.Model):
+    fullname = models.CharField(max_length=50, null=True)
+    location = models.CharField(max_length=100)
+    bio = models.TextField(max_length=100)
+    mediums = models.ManyToManyField(to=Medium)
+    phone = models.CharField(max_length=50)
 
 
 class Artwork(models.Model):

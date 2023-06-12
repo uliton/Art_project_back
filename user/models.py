@@ -66,10 +66,4 @@ class User(AbstractUser):
     objects = UserManager()
 
 
-class Artist(models.Model):
-    fullname = models.CharField(max_length=50, null=True)
-    location = models.CharField(max_length=100)
-    bio = models.TextField(max_length=100)
-    mediums = models.ManyToManyField(to=Medium)
-    phone = models.CharField(max_length=50)
 

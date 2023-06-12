@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Artist
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -24,8 +24,4 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class ArtistSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Artist
-        fields = ["fullname",'location', "bio", "phone"]
