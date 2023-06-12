@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.translation import gettext as _
 
+from gallery_app.models import Medium
 from user.validators import UnicodeFullnameValidator
 
 
@@ -69,7 +70,6 @@ class Artist(models.Model):
     fullname = models.CharField(max_length=50, null=True)
     location = models.CharField(max_length=100)
     bio = models.TextField(max_length=100)
-    # mediums = models.ManyToManyField(to="medium")
-    # art_object = models.ManyToManyField(to="art_object")
+    mediums = models.ManyToManyField(to=Medium)
     phone = models.CharField(max_length=50)
 

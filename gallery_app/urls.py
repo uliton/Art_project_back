@@ -10,3 +10,5 @@ router.register(r"medium", MediumViewSet)
 urlpatterns = [
     path("", include(router.urls)),
 ]
+
+app_name = "gallery"
