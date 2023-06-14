@@ -5,7 +5,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.translation import gettext as _
 
-from gallery_app.models import Medium
+from gallery_app.models import Category
 from user.validators import UnicodeFullnameValidator
 
 
