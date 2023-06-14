@@ -1,16 +1,45 @@
 from django.conf import settings
 from django.db import models
+from enum import Enum
 
 
-class Style(models.Model):
-    name = models.CharField(max_length=255)
+class ArtworkColor(Enum):
+    BEIGE = "Beige"
+    BLACK = "Black"
+    BLUE = "Blue"
+    BROWN = "Brown"
+    GOLD = "Gold"
+    GREEN = "Green"
+    GREY = "Grey"
+    ORANGE = "Orange"
+    PINK = "Pink"
+    PURPLE = "Purple"
+    RED = "Red"
+    SILVER = "Silver"
+    WHITE = "White"
+    YELLOW = "Yellow"
+    MULTI = "Multi"
+    BLACK_AND_WHITE = "Black & White"
 
-    def __str__(self):
-        return self.name
+
+class ArtworkCategory(Enum):
+    PAINTING = "Painting"
+    PHOTOGRAPHY = "Photography"
+    SCULPTURE = "Sculpture"
+    PRINTS = "Prints"
+    WORK_ON_PAPER = "Work on paper"
+    DESIGN = "Design"
+    GRAPHIC_DESIGN = "Graphic design"
+    COLLAGES = "Collages"
+    ILLUSTRATION = "Illustration"
 
 
-class Medium(models.Model):
-    name = models.CharField(max_length=255)
+class Category(models.Model):
+    CATEGORY_CHOICES = [(tag.value, tag.value) for tag in ArtworkCategory]
+
+    name = models.CharField(
+        choices=CATEGORY_CHOICES, max_length=255, unique=True
+    )
 
     def __str__(self):
         return self.name
@@ -20,23 +49,27 @@ class Artist(models.Model):
     fullname = models.CharField(max_length=50, null=True)
     location = models.CharField(max_length=100)
     bio = models.TextField(max_length=100)
-    mediums = models.ManyToManyField(to=Medium)
+    categories = models.ManyToManyField(to=Category)
     phone = models.CharField(max_length=50)
 
 
 class Artwork(models.Model):
     title = models.CharField(max_length=255)
-    artist = models.ForeignKey(to=Artist, on_delete=models.CASCADE, related_name="artworks")
+    artist = models.ForeignKey(
+        to=Artist, on_delete=models.CASCADE, related_name="artworks"
+    )
     image_url = models.URLField()
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    likes = models.ManyToManyField(to=settings.AUTH_USER_MODEL, related_name="liked_artworks", blank=True)
-    style = models.ForeignKey(to=Style, on_delete=models.CASCADE, related_name="artworks")
-    medium = models.ForeignKey(to=Medium, on_delete=models.CASCADE, related_name="artworks")
+    likes = models.ManyToManyField(
+        to=settings.AUTH_USER_MODEL, related_name="liked_artworks", blank=True
+    )
+    categories = models.ForeignKey(
+        to=Category, on_delete=models.CASCADE, related_name="artworks"
+    )
+    COLOR_CHOICES = [(tag.name, tag.value) for tag in ArtworkColor]
+
+    color = models.CharField(choices=COLOR_CHOICES, max_length=100)
 
     def __str__(self):
         return self.title
-
-
-
-
