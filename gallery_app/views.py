@@ -1,21 +1,37 @@
 from rest_framework import viewsets
-from .models import Artwork, Style, Medium, Artist
-from .serializers import ArtworkSerializer, StyleSerializer, MediumSerializer, ArtistSerializer
+from .models import Artwork, Category, Artist
+from django.db.models import Q
+from .serializers import (
+    ArtworkSerializer,
+    CategorySerializer,
+    ArtistSerializer,
+)
 
 
 class ArtworkViewSet(viewsets.ModelViewSet):
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        color = self.request.query_params.get("color")
+        category = self.request.query_params.get("category")
 
-class StyleViewSet(viewsets.ModelViewSet):
-    queryset = Style.objects.all()
-    serializer_class = StyleSerializer
+        if color and category:
+            queryset = queryset.filter(
+                Q(color__iexact=color) & Q(categories__name__iexact=category)
+            )
+        elif color:
+            queryset = queryset.filter(color__iexact=color)
+        elif category:
+            queryset = queryset.filter(categories__name__iexact=category)
+
+        return queryset
 
 
-class MediumViewSet(viewsets.ModelViewSet):
-    queryset = Medium.objects.all()
-    serializer_class = MediumSerializer
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
 class ArtistViewSet(viewsets.ModelViewSet):
