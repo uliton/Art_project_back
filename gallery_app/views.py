@@ -16,15 +16,29 @@ class ArtworkViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         color = self.request.query_params.get("color")
         category = self.request.query_params.get("category")
+        title = self.request.query_params.get("title")
+        artist = self.request.query_params.get("artist")
 
         if color and category:
             queryset = queryset.filter(
-                Q(color__iexact=color) & Q(categories__name__iexact=category)
+                Q(color__icontains=color) & Q(categories__name__icontains=category)
             )
         elif color:
-            queryset = queryset.filter(color__iexact=color)
+            queryset = queryset.filter(color__icontains=color)
         elif category:
-            queryset = queryset.filter(categories__name__iexact=category)
+            queryset = queryset.filter(categories__name__icontains=category)
+
+        elif title:
+            queryset = queryset.filter(title__icontains=title)
+
+        elif category and artist:
+            queryset = queryset.filter(
+                Q(categories__name__icontains=category)
+                & Q(artist__fullname__icontains=artist)
+            )
+
+        elif artist:
+            queryset = queryset.filter(artist__fullname__icontains=artist)
 
         return queryset
 
@@ -37,3 +51,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category = self.request.query_params.get("category")
+        location = self.request.query_params.get("location")
+
+        if category:
+            queryset = queryset.filter(artworks__categories__name__icontains=category).distinct()
+
+        if location:
+            queryset = queryset.filter(location__icontains=location)
+
+        return queryset

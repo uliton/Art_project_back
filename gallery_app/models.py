@@ -37,9 +37,7 @@ class ArtworkCategory(Enum):
 class Category(models.Model):
     CATEGORY_CHOICES = [(tag.value, tag.value) for tag in ArtworkCategory]
 
-    name = models.CharField(
-        choices=CATEGORY_CHOICES, max_length=255, unique=True
-    )
+    name = models.CharField(choices=CATEGORY_CHOICES, max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -51,6 +49,7 @@ class Artist(models.Model):
     bio = models.TextField(max_length=100)
     categories = models.ManyToManyField(to=Category)
     phone = models.CharField(max_length=50)
+    image = models.ImageField()
 
 
 class Artwork(models.Model):
