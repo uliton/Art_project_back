@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "corsheaders",
     "rest_framework",
     "drf_spectacular",
     "user",
@@ -158,3 +159,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
 }
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5173"
+]
