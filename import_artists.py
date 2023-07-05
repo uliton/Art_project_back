@@ -16,9 +16,11 @@ def import_artists_from_csv(file_path):
             fullname=row['fullname'],
             location=row['location'],
             bio=row['bio'],
-            categories=row['categories'],
             phone=row['phone']
         )
         image = row['image']
         artist.image.save(image.split('/')[-1], open(image, 'rb'), save=True)
         artist.save()
+
+        categories = row['categories'].split(",")
+        artist.categories.set(categories)
