@@ -66,6 +66,7 @@ class Artwork(models.Model):
     categories = models.ForeignKey(
         to=Category, on_delete=models.CASCADE, related_name="artworks"
     )
+
     COLOR_CHOICES = [(tag.name, tag.value) for tag in ArtworkColor]
 
     color = models.CharField(choices=COLOR_CHOICES, max_length=100)

@@ -43,7 +43,9 @@ class ArtworkSerializer(serializers.ModelSerializer):
         required=False,
     )
 
-    categories = serializers.CharField(source="categories.name", read_only=True)
+    categories = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), allow_null=True
+    )
 
     def get_likes_count(self, obj):
         return obj.likes.count()
@@ -51,14 +53,9 @@ class ArtworkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         artist = validated_data.pop("artist")
         likes = validated_data.pop("likes", [])
-        category_name = validated_data.pop("category")
-        category, _ = Category.objects.get_or_create(name=category_name)
-
-        artwork = Artwork.objects.create(
-            artist=artist, categories=category, **validated_data
-        )
+        categories = validated_data.pop("categories", None)
+        artwork = Artwork.objects.create(artist=artist, categories=categories, **validated_data)
         artwork.likes.set(likes)
-
         return artwork
 
     class Meta:
