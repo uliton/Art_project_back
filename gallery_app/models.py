@@ -70,6 +70,6 @@ class Artwork(models.Model):
     COLOR_CHOICES = [(tag.name, tag.value) for tag in ArtworkColor]
 
     color = models.CharField(choices=COLOR_CHOICES, max_length=100)
-    year = models.IntegerField()
+    year = models.IntegerField(null=False, blank=False)
     def __str__(self):
         return self.title
