@@ -70,6 +70,7 @@ class ArtworkSerializer(serializers.ModelSerializer):
             "likes_count",
             "color",
             "categories",
+            "year",
             "likes",
         ]
         read_only_fields = ["likes_count", "likes"]
