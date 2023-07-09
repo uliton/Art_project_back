@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+
+from pagination import ArtGalleryListPagination
 from .models import Artwork, Category, Artist
 from django.db.models import Q
 from .serializers import (
@@ -11,6 +13,7 @@ from .serializers import (
 class ArtworkViewSet(viewsets.ModelViewSet):
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
+    pagination_class = ArtGalleryListPagination
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -51,6 +54,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+    pagination_class = ArtGalleryListPagination
 
     def get_queryset(self):
         queryset = super().get_queryset()
