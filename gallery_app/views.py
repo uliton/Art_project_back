@@ -18,12 +18,12 @@ class ArtworkViewSet(viewsets.ModelViewSet):
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
     pagination_class = ArtGalleryListPagination
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
-    def get_permissions(self):
-        if self.action in ("create", "update",  "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ("create", "update",  "destroy"):
+    #         return [IsAdminUser()]
+    #     return super().get_permissions()
 
     @action(detail=True, methods=['patch'])
     def like(self, request, pk=None):
@@ -75,24 +75,24 @@ class ArtworkViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
-    def get_permissions(self):
-        if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ("create", "update", "partial_update", "destroy"):
+    #         return [IsAdminUser()]
+    #     return super().get_permissions()
 
 
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
     pagination_class = ArtGalleryListPagination
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
-    def get_permissions(self):
-        if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ("create", "update", "partial_update", "destroy"):
+    #         return [IsAdminUser()]
+    #     return super().get_permissions()
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -106,5 +106,3 @@ class ArtistViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(location__icontains=location)
 
         return queryset
-
-
