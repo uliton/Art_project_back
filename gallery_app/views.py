@@ -106,3 +106,5 @@ class ArtistViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(location__icontains=location)
 
         return queryset
+
+
