@@ -21,6 +21,10 @@ class ArtworkColor(Enum):
     MULTI = "Multi"
     BLACK_AND_WHITE = "Black & White"
 
+    @classmethod
+    def choices(cls):
+        return [(tag.name, tag.value) for tag in cls]
+
 
 class ArtworkCategory(Enum):
     PAINTING = "Painting"
