@@ -15,15 +15,19 @@ class CategorySerializer(serializers.ModelSerializer):
 class ArtworkSerializer(serializers.ModelSerializer):
     artist = serializers.PrimaryKeyRelatedField(queryset=Artist.objects.all())
     likes_count = serializers.SerializerMethodField()
-    color = serializers.MultipleChoiceField(
-        choices=[(choice.value, choice.name) for choice in ArtworkColor],
-        allow_blank=True,
-        required=False,
-    )
-
+    color = serializers.SerializerMethodField()
     categories = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), allow_null=True
     )
+
+    def get_color(self, obj):
+        return obj.color.split(',') if obj.color else []
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['color'] = list(representation['color'])
+        return representation
+
 
     def get_likes_count(self, obj):
         return obj.likes.count()
@@ -86,9 +90,9 @@ class ArtworkDetailSerializer(serializers.ModelSerializer):
             "title",
             "artist",
             "image_url",
-            "description",
-            "price",
-            "color",
+            # "description",
+            # "price",
+            # "color",
             "categories",
             "likes_count",
             "year",
