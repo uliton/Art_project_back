@@ -1,29 +1,33 @@
-from rest_framework import viewsets, status
+from django.db.models import Q
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from pagination import ArtGalleryListPagination
-from .models import Artwork, Category, Artist
-from django.db.models import Q
+from .models import Artwork, Category, Artist, Like
 from .serializers import (
     ArtworkSerializer,
     CategorySerializer,
-    ArtistSerializer, ArtworkDetailSerializer,
+    ArtistSerializer,
+    LikeSerializer,
 )
 
 
-class ArtworkViewSet(viewsets.ModelViewSet):
+class BaseArtViewSet(viewsets.ModelViewSet):
+    pagination_class = ArtGalleryListPagination
+    permission_classes = (IsAuthenticated,)
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAdminUser()]
+        return super().get_permissions()
+
+
+class ArtworkViewSet(BaseArtViewSet):
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
-    pagination_class = ArtGalleryListPagination
-    # permission_classes = (IsAuthenticated,)
-
-    # def get_permissions(self):
-    #     if self.action in ("create", "update",  "destroy"):
-    #         return [IsAdminUser()]
-    #     return super().get_permissions()
 
     @action(detail=True, methods=['patch'])
     def like(self, request, pk=None):
@@ -66,33 +70,15 @@ class ArtworkViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(artist__fullname__icontains=artist)
         return queryset
 
-    def get_serializer_class(self):
-        if self.action in ["update", "partial_update"]:
-            return ArtworkDetailSerializer
-        return ArtworkSerializer
-
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = (IsAuthenticated,)
-
-    # def get_permissions(self):
-    #     if self.action in ("create", "update", "partial_update", "destroy"):
-    #         return [IsAdminUser()]
-    #     return super().get_permissions()
 
 
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    pagination_class = ArtGalleryListPagination
-    # permission_classes = (IsAuthenticated,)
-
-    # def get_permissions(self):
-    #     if self.action in ("create", "update", "partial_update", "destroy"):
-    #         return [IsAdminUser()]
-    #     return super().get_permissions()
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -106,3 +92,36 @@ class ArtistViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(location__icontains=location)
 
         return queryset
+
+
+class LikeCreateView(generics.CreateAPIView):
+    """Endpoint for create like"""
+
+    serializer_class = LikeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        artwork = self.get_artwork()
+        user = self.request.user
+        serializer.save(user=user, artwork=artwork)
+
+    def get_artwork(self):
+        artwork_id = self.kwargs["pk"]
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
+        return artwork
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["artwork"] = self.get_artwork()
+        return context
+
+
+class LikedArtworksView(generics.ListAPIView):
+    serializer_class = ArtworkSerializer
+    pagination_class = ArtGalleryListPagination
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        liked_artwork_ids = Like.objects.filter(user=user).values_list("artwork", flat=True)
+        return Artwork.objects.filter(id__in=liked_artwork_ids)

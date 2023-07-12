@@ -5,7 +5,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.translation import gettext as _
 
-from gallery_app.models import Category
+from gallery_app.models import Category, Artwork, Like
 from user.validators import UnicodeFullnameValidator
 
 
@@ -52,6 +52,7 @@ class User(AbstractUser):
     username = None
     fullname_validator = UnicodeFullnameValidator()
     email = models.EmailField(_("email address"), unique=True)
+    likes = models.ManyToManyField(Artwork, through=Like, related_name="liked_by")
     fullname = models.CharField(
         _("fullname"),
         max_length=30,

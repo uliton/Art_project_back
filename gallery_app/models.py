@@ -1,6 +1,7 @@
+from enum import Enum
+
 from django.conf import settings
 from django.db import models
-from enum import Enum
 
 
 class ArtworkColor(Enum):
@@ -65,15 +66,23 @@ class Artwork(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     likes = models.ManyToManyField(
-        to=settings.AUTH_USER_MODEL, related_name="liked_artworks", blank=True
-    )
+        to=settings.AUTH_USER_MODEL, related_name="liked_artworks", through="Like")
     categories = models.ForeignKey(
         to=Category, on_delete=models.CASCADE, related_name="artworks"
     )
 
     COLOR_CHOICES = [(tag.name, tag.value) for tag in ArtworkColor]
 
-    color = models.CharField(choices=COLOR_CHOICES, max_length=100)
-    year = models.IntegerField(null=False, blank=False)
+    color = models.CharField(choices=COLOR_CHOICES, max_length=100, )
+    year = models.IntegerField(null=False, blank=False, )
+
     def __str__(self):
         return self.title
+
+
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name='likess')
+
+    class Meta:
+        unique_together = ("user", "artwork")
