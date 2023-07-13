@@ -11,7 +11,7 @@ from .serializers import (
     ArtworkSerializer,
     CategorySerializer,
     ArtistSerializer,
-    LikeSerializer,
+    LikeSerializer, ArtworkCreateSerializer,
 )
 
 
@@ -69,6 +69,11 @@ class ArtworkViewSet(BaseArtViewSet):
         elif artist:
             queryset = queryset.filter(artist__fullname__icontains=artist)
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return ArtworkCreateSerializer
+        return ArtworkSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
