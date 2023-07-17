@@ -54,7 +54,7 @@ class ArtworkCreateSerializer(serializers.ModelSerializer):
     artist = serializers.PrimaryKeyRelatedField(
         queryset=Artist.objects.all()
     )
-    color = serializers.ChoiceField(choices=Artwork.COLOR_CHOICES)
+    color = serializers.MultipleChoiceField(choices=Artwork.COLOR_CHOICES)
     categories = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), allow_null=True
     )
@@ -69,15 +69,16 @@ class ArtworkCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        color_code = representation['color']
-        color_name = dict(Artwork.COLOR_CHOICES).get(color_code)
-        representation['color'] = [color_name] if color_name else []
+        color_codes = representation['color']
+        color_names = [dict(Artwork.COLOR_CHOICES).get(code) for code in color_codes]
+        representation['color'] = [color_names] if color_names else []
         return representation
 
     def create(self, validated_data):
         artist = validated_data.pop("artist")
         categories = validated_data.pop("categories", None)
-        artwork = Artwork.objects.create(artist=artist, categories=categories, **validated_data)
+        colors = validated_data.pop("color", None)
+        artwork = Artwork.objects.create(artist=artist, categories=categories, color=colors, **validated_data)
         return artwork
 
     class Meta:

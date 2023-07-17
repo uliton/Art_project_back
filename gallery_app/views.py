@@ -2,11 +2,12 @@ from django.db.models import Q
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from pagination import ArtGalleryListPagination
 from .models import Artwork, Category, Artist, Like
+from .permissions import IsAdminOrReadOnly
 from .serializers import (
     ArtworkSerializer,
     CategorySerializer,
@@ -17,12 +18,11 @@ from .serializers import (
 
 class BaseArtViewSet(viewsets.ModelViewSet):
     pagination_class = ArtGalleryListPagination
-    permission_classes = (IsAuthenticated,)
 
     def get_permissions(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
+            return [IsAdminOrReadOnly()]
+        return [IsAuthenticatedOrReadOnly()]
 
 
 class ArtworkViewSet(BaseArtViewSet):
@@ -76,12 +76,12 @@ class ArtworkViewSet(BaseArtViewSet):
         return ArtworkSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(BaseArtViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class ArtistViewSet(viewsets.ModelViewSet):
+class ArtistViewSet(BaseArtViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
 
