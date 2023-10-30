@@ -56,6 +56,9 @@ class Artist(models.Model):
     phone = models.CharField(max_length=50)
     image = models.ImageField()
 
+    class Meta:
+        ordering = ["id"]
+
 
 class Artwork(models.Model):
     title = models.CharField(max_length=255)
@@ -75,6 +78,9 @@ class Artwork(models.Model):
 
     color = models.CharField(choices=COLOR_CHOICES, max_length=100, )
     year = models.IntegerField(null=False, blank=False, )
+
+    class Meta:
+        ordering = ["id"]
 
     def __str__(self):
         return self.title

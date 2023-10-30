@@ -10,10 +10,14 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class ArtistFullnameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = ('id', 'fullname')
+
+
 class ArtworkSerializer(serializers.ModelSerializer):
-    artist = serializers.PrimaryKeyRelatedField(
-        queryset=Artist.objects.all()
-    )
+    artist = ArtistFullnameSerializer()
     likes = serializers.SerializerMethodField()
     color = serializers.SerializerMethodField()
     categories = serializers.PrimaryKeyRelatedField(
